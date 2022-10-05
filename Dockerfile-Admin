@@ -1,0 +1,4 @@
+FROM openjdk:11
+MAINTAINER lshi
+COPY admin-service/build/libs/admin-service-0.0.1-SNAPSHOT.jar admin-service.jar
+ENTRYPOINT ["java","-jar","/admin-service.jar"]
