@@ -24,7 +24,7 @@ gradlew build
 4) docker build --tag=map-api:latest -f Dockerfile-Map .
 5) docker compose up -d
 
-![Containers](./194169640-11985d17-c55d-4067-b111-3e0ed2a9eece.png)
+<img src="https://user-images.githubusercontent.com/108343174/194169640-11985d17-c55d-4067-b111-3e0ed2a9eece.png" width="250">
 
 How to test
 
