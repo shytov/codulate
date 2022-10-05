@@ -24,7 +24,7 @@ gradlew build
 4) docker build --tag=map-api:latest -f Dockerfile-Map .
 5) docker compose up -d
 
-![Containers](https://user-images.githubusercontent.com/108343174/194169640-11985d17-c55d-4067-b111-3e0ed2a9eece.png)
+![Containers](194169640-11985d17-c55d-4067-b111-3e0ed2a9eece.png)
 
 How to test
 
@@ -32,16 +32,18 @@ How to test
 ![Swagger UI](https://user-images.githubusercontent.com/108343174/194169957-121ca7e5-43a1-41be-b723-c4b9785e127b.png)
 
 For example, input Bermuda Triangle Zone coordinates array
+```
 [{"x": 25.774, "y": -80.19},
 {"x": 18.466, "y":-66.118},
 {"x": 32.321, "y": -64.757},
 {"x": 25.774, "y": -80.19}]
+```
 
 ![Bermuda Triangle](https://user-images.githubusercontent.com/108343174/194170647-5da9e6c8-2114-49e0-8482-9891bcfdb1d2.png)
 
 2) Open ActiveMq Admin UI http://127.0.0.1:8161/admin/send.jsp
 
-Send for example point {"x":26.45,  "y":-66.29}, that is inside Bermuda triangle
+Send for example point `{"x":26.45,  "y":-66.29}`, that is inside Bermuda triangle
 
 ![Send ActiveMq message](https://user-images.githubusercontent.com/108343174/194170831-87257269-8135-4586-b239-6b8a9f16fd98.png)
 
