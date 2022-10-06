@@ -8,6 +8,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class LocationRequestDto {
+    private String zoneName;
     private CoordinateDto point;
     private PathDto path;
 }

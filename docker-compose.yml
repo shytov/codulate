@@ -42,8 +42,7 @@ services:
       ACTIVEMQ_READ_PASSWORD: password
       ACTIVEMQ_JMX_LOGIN: jmx
       ACTIVEMQ_JMX_PASSWORD: password
-      ACTIVEMQ_STATIC_TOPICS: coordinates-topic,violations-topic
-      ACTIVEMQ_STATIC_QUEUES: coordinates-queue
+      ACTIVEMQ_STATIC_TOPICS: coordinates,violations
       ACTIVEMQ_ENABLED_SCHEDULER: "true"
       ACTIVEMQ_MIN_MEMORY: 256
       ACTIVEMQ_MAX_MEMORY: 512

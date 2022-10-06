@@ -23,6 +23,12 @@ public class AdminController {
     private final GeoZoneService geoZoneService;
     private final MessageSource messageSource;
 
+    /**
+     * Add new Zone with name and path
+     * @param path
+     * @param name
+     * @return
+     */
     @PostMapping(value = "/add_zone")
     public GeoZone addZone(@RequestBody PointDto[] path, @RequestParam(required = true) String name) {
         LOG.info("Get zone:  {} | {}", path, name);

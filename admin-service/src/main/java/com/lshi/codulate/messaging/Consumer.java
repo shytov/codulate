@@ -7,15 +7,15 @@ import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jms.annotation.JmsListener;
-import org.springframework.jms.core.JmsTemplate;
-import org.springframework.jms.core.MessageCreator;
 import org.springframework.stereotype.Component;
 
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.Session;
-import java.text.MessageFormat;
+import java.util.concurrent.ExecutorService;
 
+import static com.lshi.codulate.Constants.COORDINATES_TOPIC;
+
+/**
+ * Listen for user check location request
+ */
 @Component
 @AllArgsConstructor
 public class Consumer {
@@ -23,29 +23,31 @@ public class Consumer {
 
     private final ObjectMapper objectMapper;
     private final GeoZoneCheckerService geoZoneCheckerService;
+    private final ExecutorService dbThreadPool;
 
-    private final JmsTemplate jmsTemplate;
-
-    @JmsListener(destination = "coordinates-topic")
+    @JmsListener(destination = COORDINATES_TOPIC)
     public void consumeMessage(String message) {
         LOG.info("Message received from activemq topic {}", message);
 
         PointDto userPoint;
-        try{
+        try {
             userPoint = objectMapper.readValue(message, PointDto.class);
         } catch (Exception e) {
             LOG.error("JMS message is invalid: {}", message, e);
             return;
         }
 
-        var foundZone = geoZoneCheckerService.check(userPoint);
-        if(foundZone != null) {
-            jmsTemplate.send("violations-topic", new MessageCreator() {
-                @Override
-                public Message createMessage(Session session) throws JMSException {
-                    return session.createTextMessage(MessageFormat.format("Zone {0} violated", foundZone.getName()));
-                }
-            });
-        }
+        handleUserPoint(userPoint);
+    }
+
+    private void handleUserPoint(PointDto userPoint) {
+        dbThreadPool.execute(() -> {
+            try {
+                var requestData = geoZoneCheckerService.getRequestData(userPoint);
+                geoZoneCheckerService.checkAsync(requestData);
+            } catch (Exception e) {
+                LOG.error("Get zones data error: {}", userPoint, e);
+            }
+        });
     }
 }

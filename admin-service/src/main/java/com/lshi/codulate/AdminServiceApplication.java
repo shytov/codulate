@@ -28,6 +28,16 @@ public class AdminServiceApplication {
         return Executors.newFixedThreadPool(3);
     }
 
+    @Bean("dbThreadPool")
+    public ExecutorService dbThreadPool() {
+        return Executors.newFixedThreadPool(3);
+    }
+
+    @Bean("jmsThreadPool")
+    public ExecutorService jmsThreadPool() {
+        return Executors.newFixedThreadPool(3);
+    }
+
     public static void main(String[] args) {
         SpringApplication.run(AdminServiceApplication.class, args);
     }

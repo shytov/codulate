@@ -1,8 +1,8 @@
-#MVP for Codulate test task
+# MVP for Codulate test task
 
 The task is to build simple zone validation service
 
-##Run as Docker Compose build
+## Run as Docker Compose build
 
 Service consists of
 1) Admin service - admin-service. Used for input Zone coordinates, store them in DB, and listening to ActiveMq broker.
@@ -13,7 +13,7 @@ Then we can check if user input location point is inside this Polygon/Zone.
 3) ActiveMq integraion broker.
 4) Postgres database
 
-How to run.
+## How to run.
 Just input this commands in terminal.
 
 1) cd ./admin-service
@@ -38,6 +38,21 @@ For example, input Bermuda Triangle Zone coordinates array
 {"x": 32.321, "y": -64.757},
 {"x": 25.774, "y": -80.19}]
 ```
+Point in `{"x":26.45,  "y":-66.29}`
+
+Point out `{"x":23.985, "y":-53.855}`
+
+Albuqerque Zone coordinates array
+```
+[{"x": 37.00, "y": -109.05},
+{"x": 36.93, "y": -103.07},
+{"x": 32.08, "y": -102.98},
+{"x": 32.15, "y": -109.00},
+{"x": 37.00, "y": -109.05}]
+```
+Point in `{"x":34.54,  "y":-105.71}`
+
+Point out `{"x":34.17, "y":-99.07}`
 
 ![Bermuda Triangle](https://user-images.githubusercontent.com/108343174/194170647-5da9e6c8-2114-49e0-8482-9891bcfdb1d2.png)
 
