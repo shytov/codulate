@@ -17,12 +17,14 @@ Then we can check if user input location point is inside this Polygon/Zone.
 Just input this commands in terminal.
 
 1) cd ./admin-service
-gradlew build
-2) cd ../mapapi
-gradlew build
-3) docker build --tag=admin-service:latest -f Dockerfile-Admin .
-4) docker build --tag=map-api:latest -f Dockerfile-Map .
-5) docker compose up -d
+2) gradlew build
+3) cd ../mapapi
+4) gradlew build
+5) cd ..
+6) docker build --tag=admin-service:latest -f Dockerfile-Admin .
+7) docker build --tag=map-api:latest -f Dockerfile-Map .
+8) docker compose up -d
+
 
 ![Containers](https://user-images.githubusercontent.com/108343174/194169640-11985d17-c55d-4067-b111-3e0ed2a9eece.png)
 
