@@ -10,20 +10,22 @@ Service consists of
 which is good approximation for Google Map Api. It can create Polygon,
 let's assume that this is equal to Zone from task description.
 Then we can check if user input location point is inside this Polygon/Zone.
-3) ActiveMq integraion broker.
-4) Postgres database
+3) Pipeline service - check point is location in zones in async pipeline. 
+There can be many zones and access to map rate limited, so we put check tasks in pipeline queue 
+4) ActiveMq integraion broker.
+5) Postgres database
 
 ## How to run.
 Just input this commands in terminal.
 
-1) cd ./admin-service
-2) gradlew build
-3) cd ../mapapi
-4) gradlew build
-5) cd ..
-6) docker build --tag=admin-service:latest -f Dockerfile-Admin .
-7) docker build --tag=map-api:latest -f Dockerfile-Map .
-8) docker compose up -d
+1) `cd ./admin-service && ./gradlew build`
+2) `cd ../mapapi && ../gradlew build`
+3) `cd ../pipeline && ./gradlew build`
+4) `cd ..`
+5) `docker build --tag=admin-service:latest -f Dockerfile-Admin .`
+6) `docker build --tag=map-api:latest -f Dockerfile-Map .`
+7) `docker build --tag=pipeline-service:latest -f Dockerfile-Pipeline .`
+8) `docker compose up -d`
 
 
 ![Containers](https://user-images.githubusercontent.com/108343174/194169640-11985d17-c55d-4067-b111-3e0ed2a9eece.png)
