@@ -43,6 +43,7 @@ services:
       ACTIVEMQ_JMX_LOGIN: jmx
       ACTIVEMQ_JMX_PASSWORD: password
       ACTIVEMQ_STATIC_TOPICS: coordinates,violations
+      ADMIN_STATIC_QUEUES: pipeline
       ACTIVEMQ_ENABLED_SCHEDULER: "true"
       ACTIVEMQ_MIN_MEMORY: 256
       ACTIVEMQ_MAX_MEMORY: 512
@@ -51,7 +52,7 @@ services:
     container_name: map-api
     build:
       context: docker-map-api
-      dockerfile: Dockerfile-Admin
+      dockerfile: Dockerfile-Map
     image: map-api:latest
     ports:
       - 28080:8080
@@ -72,6 +73,20 @@ services:
     depends_on:
       - "activemq"
       - "db"
+    restart: on-failure
+
+  pipeline-service:
+    container_name: pipeline-service
+    build:
+      context: docker-pipeline-service
+      dockerfile: Dockerfile-Pipeline
+    image: pipeline-service:latest
+    ports:
+      - 38080:8080
+    networks:
+      - backing-services
+    depends_on:
+      - "activemq"
     restart: on-failure
 
 volumes:

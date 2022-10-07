@@ -1,5 +1,6 @@
 package com.lshi.codulate.service.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lshi.codulate.dto.CoordinateDto;
 import com.lshi.codulate.dto.LocationRequestDto;
 import com.lshi.codulate.dto.PathDto;
@@ -12,19 +13,15 @@ import com.lshi.codulate.service.GeoZoneCheckerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import javax.transaction.Transactional;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
 
-import static com.lshi.codulate.Constants.VIOLATIONS_TOPIC;
+import static com.lshi.codulate.Constants.PIPELINE_QUEUE;
 
 @Service
 public class GeoZoneCheckerServiceImpl implements GeoZoneCheckerService {
@@ -32,30 +29,23 @@ public class GeoZoneCheckerServiceImpl implements GeoZoneCheckerService {
 
     private final GeoZoneRepository geoZoneRepository;
     private final GeoCoordinateRepository geoCoordinateRepository;
-
-    private final RestTemplate restTemplate;
-
-    private final ExecutorService ioThreadPool;
-
     private final ExecutorService jmsThreadPool;
-
     private final Producer producer;
+    private final ObjectMapper objectMapper;
 
     @Value(value = "${app.map-api.url}")
     private String mapApiUrl;
 
     public GeoZoneCheckerServiceImpl(GeoZoneRepository geoZoneRepository,
                                      GeoCoordinateRepository geoCoordinateRepository,
-                                     RestTemplate restTemplate,
-                                     ExecutorService ioThreadPool,
                                      ExecutorService jmsThreadPool,
-                                     Producer producer) {
+                                     Producer producer,
+                                     ObjectMapper objectMapper) {
         this.geoZoneRepository = geoZoneRepository;
         this.geoCoordinateRepository = geoCoordinateRepository;
-        this.restTemplate = restTemplate;
-        this.ioThreadPool = ioThreadPool;
         this.jmsThreadPool = jmsThreadPool;
         this.producer = producer;
+        this.objectMapper = objectMapper;
     }
 
     /**
@@ -89,38 +79,17 @@ public class GeoZoneCheckerServiceImpl implements GeoZoneCheckerService {
     @Override
     public void checkAsync(List<LocationRequestDto> requestData) {
         for (LocationRequestDto locationRequestDto : requestData) {
-            ioThreadPool.execute(() -> {
-                makeRequestAndHandleResult(locationRequestDto);
-            });
-        }
-    }
-
-    private void makeRequestAndHandleResult(LocationRequestDto locationRequestDto) {
-        try {
-            Boolean isInZone = makeRequest(locationRequestDto);
-            if (isInZone != null && isInZone) {
-                sendToJms(locationRequestDto);
-            }
-        } catch (Exception e) {
-            LOG.error("Error check location: {}", locationRequestDto, e);
+            sendToJms(locationRequestDto);
         }
     }
 
     private void sendToJms(LocationRequestDto locationRequestDto) {
         jmsThreadPool.execute(() -> {
             try {
-                producer.send(VIOLATIONS_TOPIC, MessageFormat.format("Zone {0} violated", locationRequestDto.getZoneName()));
+                producer.send(PIPELINE_QUEUE, objectMapper.writeValueAsString(locationRequestDto));
             } catch (Exception e) {
                 LOG.error("Error send JMS result: {}", locationRequestDto, e);
             }
         });
-    }
-
-    private Boolean makeRequest(LocationRequestDto locationRequestDto) {
-        LOG.info("Before request to {} | {}", mapApiUrl, locationRequestDto);
-        HttpEntity<LocationRequestDto> entity = new HttpEntity<>(locationRequestDto, null);
-        String result = restTemplate.exchange(mapApiUrl + "/contains_location", HttpMethod.POST, entity, String.class).getBody();
-        LOG.info("After request to {} | {}", mapApiUrl, result);
-        return Boolean.parseBoolean(result);
     }
 }

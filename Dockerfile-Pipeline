@@ -1,0 +1,4 @@
+FROM openjdk:11
+MAINTAINER lshi
+COPY pipeline/build/libs/pipeline-0.0.1-SNAPSHOT.jar pipeline.jar
+ENTRYPOINT ["java","-jar","/pipeline.jar"]

@@ -40,6 +40,33 @@ public class AdminController {
         return geoZoneService.saveFromDto(name, path);
     }
 
+    /**
+     *    Simple load test generator. Gen 100 1x1 squares shifted by 1
+     *    ________
+     *    |       |
+     *    |       |
+     *    |_______|         ___________           ___________
+     *    0       1        2          3          4          5
+     *
+     * @return
+     */
+    @PostMapping(value = "/load_test_gen")
+    public String genBigData() {
+        int j = 0;
+        for(int i = 0; i < 100; i++) {
+            String name = "Zone " + i;
+            PointDto[] path = new PointDto[] {
+                    new PointDto(j, 0, 0),
+                    new PointDto(j + 1, 0, 0),
+                    new PointDto(j + 1, 1, 0),
+                    new PointDto(j, 1, 0),
+                    new PointDto(j, 0, 0)};
+            j = j + 2;
+            geoZoneService.saveFromDto(name, path);
+        }
+        return "0";
+    }
+
     @ExceptionHandler(IllegalArgumentException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException e) {
