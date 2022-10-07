@@ -19,7 +19,7 @@ There can be many zones and access to map rate limited, so we put check tasks in
 Just input this commands in terminal.
 
 1) `cd ./admin-service && ./gradlew build`
-2) `cd ../mapapi && ../gradlew build`
+2) `cd ../mapapi && ./gradlew build`
 3) `cd ../pipeline && ./gradlew build`
 4) `cd ..`
 5) `docker build --tag=admin-service:latest -f Dockerfile-Admin .`
